@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<modDesc descVersion="61">
+	<author>loki_79</author>
+	<version>1.0.0.0</version>
+	<title>
+	<en>Keyboard Steering</en>
+	<de>Tastatursteuerung</de>
+	<fr>Pilotage Du Clavier</fr>
+	</title>
+	<description>
+<en><![CDATA[This is mod is designed to give a more analog-like control to the steering and accleration inputs when using a keyboard.
+
+Key Features:
+- Steering input increases linearly for first 500ms of steering input
+- Steering input drops off linearly at the same rate when there are no key presses
+- Steer back force is proportional to road speed (so you can still manouver normally at low speeds)
+- There is a limit to the steering angle that is also proportional to road speed
+- Press both left and right keys at the same time you will go straight (instead of turning right as you do in standard game)
+- There is no steering back force when stationary, even at 100% for the steering back setting
+- Acceleration input is smoothed to reduce the twitching of a vehicle when tapping the accelerator key (single player only)
+
+IMPORTANT:
+- If you are using a game pad or controller then the mod will do nothing
+- The "Steering Sensitivity" setting in the game is unchanged
+- The "Steering Back Speed" setting now controls the amount of reset force and also the range for the maximum steering angle
+]]>
+</en>
+<de><![CDATA[Dieser Mod wurde entwickelt, um eine analogere Steuerung der Lenkung und Beschleunigungseingaben bei Verwendung einer Tastatur zu ermöglichen.
+
+Wesentliche Merkmale:
+- Die Lenkungseingabe steigt linear für die ersten 500 ms der Lenkungseingabe
+- Die Lenkungseingabe fällt linear mit der gleichen Geschwindigkeit ab, wenn keine Tasten gedrückt werden.
+- Die Rückwärtskraft der Lenkung ist proportional zur Straßengeschwindigkeit (so dass Sie auch bei niedrigen Geschwindigkeiten noch normal manövrieren können)
+- Es gibt eine Grenze für den Lenkwinkel, die auch proportional zur Fahrgeschwindigkeit ist
+- Drücken Sie die linke und die rechte Taste gleichzeitig, um geradeaus zu fahren (anstatt wie im normalen Spiel nach rechts zu fahren)
+- Im Stillstand gibt es keine Gegenlenkkraft, auch nicht bei 100% für die Gegenlenkung
+- Die Beschleunigungseingabe wird geglättet, um das Zucken eines Fahrzeugs beim Antippen des Gaspedals zu reduzieren (nur Einzelspieler)
+
+WICHTIG:
+- Wenn Sie ein Gamepad oder einen Controller verwenden, tut der Mod nichts
+- Die Einstellung "Empfindlichkeit der Lenkung" im Spiel bleibt unverändert
+- Die Einstellung "Rückwärtslenkgeschwindigkeit" steuert jetzt die Höhe der Rückstellkraft und auch den Bereich für den maximalen Lenkwinkel
+]]>
+</de>
+<fr><![CDATA[Ce mode est conçu pour donner un contrôle plus analogique aux entrées de direction et d'accélération lors de l'utilisation d'un clavier.
+
+Caractéristiques principales:
+- L'entrée de la direction augmente linéairement pendant les 500 premières ms de l'entrée de la direction
+- Les données de pilotage diminuent linéairement au même rythme lorsqu'il n'y a pas de pression sur les touches
+- La force de recul est proportionnelle à la vitesse de la route (vous pouvez donc toujours manœuvrer normalement à faible vitesse)
+- Il existe une limite à l'angle de braquage qui est également proportionnelle à la vitesse de la route
+- Appuyez sur les touches gauche et droite en même temps pour aller tout droit (au lieu de tourner à droite comme dans le jeu standard)
+- Il n'y a pas de force de recul à l'arrêt, même à 100 % pour le réglage du recul
+- L'accélération est lissée afin de réduire les secousses d'un véhicule lorsqu'on appuie sur l'accélérateur (un joueur seulement)
+
+IMPORTANT:
+- Si vous utilisez une manette de jeu ou un contrôleur, le mod ne fera rien
+- Le paramètre "Sensibilité de la direction" du jeu est inchangé
+- Le paramètre "Vitesse de recul" contrôle désormais la force de rappel et la plage de l'angle de braquage maximal
+]]>
+</fr>
+	</description>
+	
+	<multiplayer supported="true" /> 
+	<iconFilename>modIcon.dds</iconFilename>
+	<extraSourceFiles>
+		<sourceFile filename="register.lua" />
+	</extraSourceFiles>
+	
+	<actions>
+		<action name="KBSTEERING_ENABLE_DISABLE" category="VEHICLE" axisType="HALF" ignoreComboMask="false"/>
+	</actions>
+	<inputBinding>
+		<actionBinding action="KBSTEERING_ENABLE_DISABLE" >
+			<binding device="KB_MOUSE_DEFAULT" input="" />
+		</actionBinding>
+	</inputBinding>	
+	<l10n>
+		<text name="menu_KBSTEERING_ENABLE_DISABLE">
+			<en>Keyboard Steering: Toggle</en>
+			<de>Tastatursteuerung: Umschalten</de>
+			<fr>Pilotage Au Clavier: Basculer</fr>
+		</text>
+		<text name="input_KBSTEERING_ENABLE_DISABLE">
+			<en>Enable / Disable</en>
+			<de>Aktivieren / Deaktivieren</de>
+			<fr>Activer / Désactiver</fr>
+		</text>
+	</l10n>
+
+</modDesc>
