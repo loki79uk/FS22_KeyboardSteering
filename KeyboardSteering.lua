@@ -43,11 +43,11 @@ function KeyboardSteering:onLoad(savegame)
 	kbs_spec.justEnteredVehicle 		= false
 	kbs_spec.wasDrivenByAI				= false
 	kbs_spec.accelerationFactor			= 1
-	kbs_spec.steeringWheelPosCount		= 0
-	kbs_spec.steeringWheelPosTotal		= 0
-	kbs_spec.steeringWheelPosArray		= {}
+	kbs_spec.smoothingCount				= 0
+	kbs_spec.smoothingTotal				= 0
+	kbs_spec.smoothingArray				= {}
 	for i=1, KeyboardSteering.frameAverageNumber do
-		kbs_spec.steeringWheelPosArray[i] = 0
+		kbs_spec.smoothingArray[i] = 0
     end
 end
 function KeyboardSteering:onEnterVehicle(isControlling, playerStyle, farmId)
@@ -62,10 +62,10 @@ function KeyboardSteering:onLeaveVehicle(isControlling, playerStyle, farmId)
 		kbs_spec = self.spec_keyboardSteering
 		kbs_spec.justEnteredVehicle 		= false
 		kbs_spec.accelerationFactor			= 1
-		kbs_spec.steeringWheelPosCount		= 0
-		kbs_spec.steeringWheelPosTotal		= 0
+		kbs_spec.smoothingCount				= 0
+		kbs_spec.smoothingTotal				= 0
 		for i=1, KeyboardSteering.frameAverageNumber do
-			kbs_spec.steeringWheelPosArray[i] = 0
+			kbs_spec.smoothingArray[i] = 0
 		end
 
 		KeyboardSteering.displayToggleState	= false
@@ -74,7 +74,7 @@ end
 
 function KeyboardSteering:updateWheelsPhysics(superFunc, dt, currentSpeed, acceleration, doHandbrake, stopAndGoBraking)
 	-- RETURN NORMAL FUNCTION WHEN KB STEERING IS NOT INSTALLED (ALSO MULTIPLAYER)
-	if self.spec_drivable == nil or self.spec_keyboardSteering == nil or g_currentMission.missionDynamicInfo.isMultiplayer then
+	if self.spec_drivable == nil or self.spec_keyboardSteering == nil or g_currentMission.missionDynamicInfo.isMultiplayer or g_modIsLoaded['FS22_VehicleControlAddon'] then
 		return superFunc(self, dt, currentSpeed, acceleration, doHandbrake, stopAndGoBraking)
 	end
 
@@ -219,8 +219,6 @@ function KeyboardSteering:updateWheelsPhysics(superFunc, dt, currentSpeed, accel
 
 		motor:setExternalTorqueVirtualMultiplicator(ptoTorqueVirtualMultiplicator)
 		
-
-
 		if not neutralActive then
 			if math.abs(brakePedal) == 0 then
 				-- APPLY REDUCED ACCELERATION
@@ -274,7 +272,6 @@ function KeyboardSteering:onUpdate(superFunc, dt, isActiveForInput, isActiveForI
 		if self.isActiveForInputIgnoreSelectionIgnoreAI then
 			if self:getIsVehicleControlledByPlayer() then
 				KeyboardSteering.updateKeyPresses = true
-				spec.doHandbrake = false
 				
 				--	Check for keys that were pressed and held before entering vehicle or while AI was driving
 				if kbs_spec.justEnteredVehicle or kbs_spec.wasDrivenByAI then
@@ -305,8 +302,18 @@ function KeyboardSteering:onUpdate(superFunc, dt, isActiveForInput, isActiveForI
 						kbs_spec.wasDrivenByAI = false
 					end
 				end
-				
-				-- NEW gas and brake pedal (SINGLE PLAYER ONLY)
+
+				-- KEEP RUNNING AVERAGE OF ROTATION
+				if kbs_spec.smoothingCount == KeyboardSteering.frameAverageNumber then
+					kbs_spec.smoothingCount = 0
+				end
+				kbs_spec.smoothingCount = kbs_spec.smoothingCount + 1
+				kbs_spec.smoothingTotal = kbs_spec.smoothingTotal - kbs_spec.smoothingArray[kbs_spec.smoothingCount]
+				kbs_spec.smoothingArray[kbs_spec.smoothingCount] = self.rotatedTime
+				kbs_spec.smoothingTotal = kbs_spec.smoothingTotal + self.rotatedTime
+				self.rotatedTime = kbs_spec.smoothingTotal / #kbs_spec.smoothingArray
+			
+				-- NEW accelerator and brake pedal (SINGLE PLAYER ONLY)
 				if spec.cruiseControl.state ~= Drivable.CRUISECONTROL_STATE_OFF or g_currentMission.missionDynamicInfo.isMultiplayer then
 					kbs_spec.accelerationFactor = 1
 				else
@@ -320,7 +327,8 @@ function KeyboardSteering:onUpdate(superFunc, dt, isActiveForInput, isActiveForI
 					-- CALCULATE REDUCED ACCELERATION
 					local motor = self.spec_motorized.motor
 					local brakePedal = self.spec_wheels.brakePedal
-					if math.abs(brakePedal) == 0 and (KeyboardSteering.timeReverseKeyHeld~=0 or KeyboardSteering.timeForwardKeyHeld~=0) then
+					local keyHeld = KeyboardSteering.timeReverseKeyHeld~=0 or KeyboardSteering.timeForwardKeyHeld~=0
+					if math.abs(brakePedal) == 0 and keyHeld then
 						local fullSpeed = MathUtil.clamp(motor:getMaximumForwardSpeed()*1.2, 10, 50) --Speed in m/s = kmph/3.6
 						local accnFactorLowerLimit = 1.0 / (1.0+math.exp( -(10/fullSpeed)*(self:getLastSpeed()-(fullSpeed/2))) )
 						local accnFactorUpperLimit = 1.0 - (0.9*math.exp( -10*self:getLastSpeed()/fullSpeed) )
@@ -331,24 +339,24 @@ function KeyboardSteering:onUpdate(superFunc, dt, isActiveForInput, isActiveForI
 						else
 							keyHeldTimeFactor = KeyboardSteering.timeForwardKeyHeld / KeyboardSteering.maxAccnKeyHeldTime
 						end
-						keyHeldTimeFactor = MathUtil.clamp(keyHeldTimeFactor, 0.05, 1)
+						keyHeldTimeFactor = MathUtil.clamp(keyHeldTimeFactor, dt, 1)
 						
 						kbs_spec.accelerationFactor = accnFactorLowerLimit + ((accnFactorUpperLimit-accnFactorLowerLimit) * keyHeldTimeFactor)
-						KeyboardSteering.maxAccnKeyHeldTime = 1000/60 + ((1.0-kbs_spec.accelerationFactor) * (KeyboardSteering.maxMaxAccnKeyHeldTime-(1000/60)))
+						KeyboardSteering.maxAccnKeyHeldTime = dt + ((1.0-kbs_spec.accelerationFactor) * (KeyboardSteering.maxMaxAccnKeyHeldTime-(dt)))
 					else
 						kbs_spec.accelerationFactor = 1
 						KeyboardSteering.timeForwardKeyHeld = 0
 						KeyboardSteering.timeReverseKeyHeld = 0
-						KeyboardSteering.maxAccnKeyHeldTime = 1000/60
+						KeyboardSteering.maxAccnKeyHeldTime = dt
 					end
-					--print("update: " .. kbs_spec.accelerationFactor)
+					--print("keyHeld: "..tostring(keyHeld) .. "  accn: "..kbs_spec.accelerationFactor)
 				end
 
-				-- ORIGINAL gas and brake pedal
+				-- ORIGINAL accelerator and brake pedal
 				local lastSpeed = self:getLastSpeed()
-				spec.doHandbrake = false
 				local axisForward = MathUtil.clamp(spec.lastInputValues.axisAccelerate - spec.lastInputValues.axisBrake, -1, 1)
 				spec.axisForward = axisForward
+				spec.doHandbrake = false
 
 				if spec.brakeToStop then
 					spec.lastInputValues.targetSpeed = 0.51
@@ -413,32 +421,32 @@ function KeyboardSteering:onUpdate(superFunc, dt, isActiveForInput, isActiveForI
 								local steeringAngleFactor = math.abs(spec.axisSide)
 								speedFactor = speedFactor * math.min(setting * roadSpeedFactor * steeringAngleFactor, 2)
 							end
-							speedFactor = speedFactor * (self.autoRotateBackSpeed or 1) / 1.5
+							speedFactor = speedFactor * (self.autoRotateBackSpeed or 1) * 0.5
 						else
 							local keyPressTimeFactor = KeyboardSteering.timeKeyHeld/KeyboardSteering.maxKeyHeldTime
 							speedFactor = math.min(1 / (self.lastSpeed * spec.speedRotScale + spec.speedRotScaleOffset), 1)
-							speedFactor = speedFactor * sensitivitySetting * keyPressTimeFactor
+							speedFactor = speedFactor * sensitivitySetting * keyPressTimeFactor * 0.5
 						end
 					end
 
-					-- if spec.idleTurningAllowed then
-						-- if axisForward == 0 and axisSteer ~= 0 and lastSpeed < 1 and not spec.idleTurningActive then
-							-- spec.idleTurningActive = true
-							-- spec.idleTurningDirection = MathUtil.sign(axisSteer) * spec.idleTurningDrivingDirection
-						-- end
+					if spec.idleTurningAllowed then
+						if axisForward == 0 and axisSteer ~= 0 and lastSpeed < 1 and not spec.idleTurningActive then
+							spec.idleTurningActive = true
+							spec.idleTurningDirection = MathUtil.sign(axisSteer) * spec.idleTurningDrivingDirection
+						end
 
-						-- if axisForward ~= 0 and spec.idleTurningActive then
-							-- spec.idleTurningActive = false
-							-- spec.lastInputValues.targetSpeed = nil
-						-- end
+						if axisForward ~= 0 and spec.idleTurningActive then
+							spec.idleTurningActive = false
+							spec.lastInputValues.targetSpeed = nil
+						end
 
-						-- if spec.idleTurningActive then
-							-- spec.lastInputValues.targetSpeed = spec.idleTurningMaxSpeed
-							-- spec.lastInputValues.targetDirection = spec.idleTurningDirection * MathUtil.sign(axisSteer)
-							-- axisSteer = math.abs(axisSteer) * spec.idleTurningDirection
-							-- speedFactor = speedFactor * spec.idleTurningSteeringFactor
-						-- end
-					-- end
+						if spec.idleTurningActive then
+							spec.lastInputValues.targetSpeed = spec.idleTurningMaxSpeed
+							spec.lastInputValues.targetDirection = spec.idleTurningDirection * MathUtil.sign(axisSteer)
+							axisSteer = math.abs(axisSteer) * spec.idleTurningDirection
+							speedFactor = speedFactor * spec.idleTurningSteeringFactor
+						end
+					end
 
 					local steeringDuration = (self.wheelSteeringDuration or 1) * 1000
 					local rotDelta = dt / steeringDuration * speedFactor
@@ -626,22 +634,7 @@ function KeyboardSteering:onUpdate(superFunc, dt, isActiveForInput, isActiveForI
 	-- just a visual update of the steering wheel
 	if self.isClient and isControlled then
 		if spec.steeringWheel ~= nil then
-			if spec.steeringWheel.node ~= nil then
-				-- KEEP RUNNING AVERAGE OF STEERING WHEEL POSITION
-				local _, ry, _ = getRotation(spec.steeringWheel.node)
-				if kbs_spec.steeringWheelPosCount == KeyboardSteering.frameAverageNumber then
-					kbs_spec.steeringWheelPosCount = 0
-				end
-				kbs_spec.steeringWheelPosCount = kbs_spec.steeringWheelPosCount + 1
-				kbs_spec.steeringWheelPosTotal = kbs_spec.steeringWheelPosTotal - kbs_spec.steeringWheelPosArray[kbs_spec.steeringWheelPosCount]
-				kbs_spec.steeringWheelPosArray[kbs_spec.steeringWheelPosCount] = ry
-				kbs_spec.steeringWheelPosTotal = kbs_spec.steeringWheelPosTotal + ry
-				kbs_spec.lastRotation = kbs_spec.steeringWheelPosTotal / #kbs_spec.steeringWheelPosArray
-				--print(string.format("%f,  %f", spec.steeringWheel.lastRotation, kbs_spec.lastRotation))
-				
-				spec.steeringWheel.lastRotation = kbs_spec.lastRotation
-			end
-			
+
 			local allowed = true
 			if spec.idleTurningAllowed and spec.idleTurningActive and not spec.idleTurningUpdateSteeringWheel then
 				allowed = false
@@ -684,8 +677,8 @@ function KeyboardSteering:loadMap(name)
 	KeyboardSteering.maxKeyHeldTime			= 500		-- maximum key down time (ms)
 	KeyboardSteering.goStraight				= false		-- flag to go straight after pressing left+right
 	KeyboardSteering.goStraightReleaseTime 	= 0			-- both keys down released time
-	KeyboardSteering.goStraightReleaseDelay = 100		-- both keys down release delay	
-	KeyboardSteering.frameAverageNumber		= 30		-- number of frames to average
+	KeyboardSteering.goStraightReleaseDelay = 150		-- both keys down release delay	
+	KeyboardSteering.frameAverageNumber		= 20		-- number of frames to average
 
 	--DEFAULT KEYS FOR STEERING
 	KeyboardSteering.leftKey				= {}
