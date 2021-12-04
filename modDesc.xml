@@ -5,7 +5,7 @@
 	<title>
 	<en>Keyboard Steering</en>
 	<de>Tastatursteuerung</de>
-	<fr>Pilotage Du Clavier</fr>
+	<fr>Conduite Au Clavier</fr>
 	</title>
 	<description>
 <en><![CDATA[This is mod is designed to give a more analog-like control to the steering and accleration inputs when using a keyboard.
@@ -45,18 +45,18 @@ WICHTIG:
 <fr><![CDATA[Ce mode est conçu pour donner un contrôle plus analogique aux entrées de direction et d'accélération lors de l'utilisation d'un clavier.
 
 Caractéristiques principales:
-- L'entrée de la direction augmente linéairement pendant les 500 premières ms de l'entrée de la direction
-- Les données de pilotage diminuent linéairement au même rythme lorsqu'il n'y a pas de pression sur les touches
-- La force de recul est proportionnelle à la vitesse de la route (vous pouvez donc toujours manœuvrer normalement à faible vitesse)
-- Il existe une limite à l'angle de braquage qui est également proportionnelle à la vitesse de la route
-- Appuyez sur les touches gauche et droite en même temps pour aller tout droit (au lieu de tourner à droite comme dans le jeu standard)
-- Il n'y a pas de force de recul à l'arrêt, même à 100 % pour le réglage du recul
-- L'accélération est lissée afin de réduire les secousses d'un véhicule lorsqu'on appuie sur l'accélérateur (un joueur seulement)
+- L'accélération augmente linéairement pendant les 500 premières ms de l'appui sur la touche d'accélération
+- La décélération diminue linéairement à la même vitesse lorsqu'il n'y a pas de pression sur les touches
+- La force de braquage est proportionnelle à l'allure (vous pouvez donc toujours manœuvrer normalement à vitesse réduite)
+- Il existe une limite à l'angle de braquage qui est également proportionnelle à l'allure
+- Si vous appuyez sur les touches gauche et droite en même temps, vous irez tout droit (au lieu de tourner à droite comme dans le jeu standard)
+- Il n'y a pas de Vitesse de retour des roues à l'arrêt, même à 100% pour le paramètre de Vitesse de retour des roues
+- L'accélération est lissée pour réduire les secousses du véhicule lorsque vous appuyez sur la touche d'accélération (En solo uniquement)
 
 IMPORTANT:
-- Si vous utilisez une manette de jeu ou un contrôleur, le mod ne fera rien
-- Le paramètre "Sensibilité de la direction" du jeu est inchangé
-- Le paramètre "Vitesse de recul" contrôle désormais la force de rappel et la plage de l'angle de braquage maximal
+- Si vous utilisez un gamepad ou une manette, le mod ne fera rien
+- Le paramètre "Sensibilité de la direction" dans le jeu est inchangé
+- Le paramètre "Vitesse de retour des roues" contrôle désormais la force de réinitialisation ainsi que la plage de l'angle de braquage maximal
 ]]>
 </fr>
 	</description>
@@ -79,7 +79,7 @@ IMPORTANT:
 		<text name="menu_KBSTEERING_ENABLE_DISABLE">
 			<en>Keyboard Steering: Toggle</en>
 			<de>Tastatursteuerung: Umschalten</de>
-			<fr>Pilotage Au Clavier: Basculer</fr>
+			<fr>Conduite Au Clavier: Permuter</fr>
 		</text>
 		<text name="input_KBSTEERING_ENABLE_DISABLE">
 			<en>Enable / Disable</en>
