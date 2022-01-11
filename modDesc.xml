@@ -8,7 +8,7 @@
 	<fr>Conduite Au Clavier</fr>
 	</title>
 	<description>
-<en><![CDATA[This is mod is designed to give a more analog-like control to the steering and accleration inputs when using a keyboard.
+<en><![CDATA[This mod is designed to give a more analog-like control to the steering and accleration inputs when using a keyboard.
 
 Key Features:
 - Steering input increases linearly for first 500ms of steering input
@@ -42,7 +42,7 @@ WICHTIG:
 - Die Einstellung "Rückwärtslenkgeschwindigkeit" steuert jetzt die Höhe der Rückstellkraft und auch den Bereich für den maximalen Lenkwinkel
 ]]>
 </de>
-<fr><![CDATA[Ce mode est conçu pour donner un contrôle plus analogique aux entrées de direction et d'accélération lors de l'utilisation d'un clavier.
+<fr><![CDATA[Ce mod est conçu pour donner un contrôle plus analogique aux entrées de direction et d'accélération lors de l'utilisation d'un clavier.
 
 Caractéristiques principales:
 - L'accélération augmente linéairement pendant les 500 premières ms de l'appui sur la touche d'accélération

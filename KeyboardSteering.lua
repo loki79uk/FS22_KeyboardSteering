@@ -73,7 +73,7 @@ function KeyboardSteering:onLeaveVehicle(isControlling, playerStyle, farmId)
 end
 
 function KeyboardSteering:updateWheelsPhysics(superFunc, dt, currentSpeed, acceleration, doHandbrake, stopAndGoBraking)
-	-- RETURN NORMAL FUNCTION WHEN KB STEERING IS NOT INSTALLED (ALSO MULTIPLAYER)
+	-- RETURN NORMAL FUNCTION WHEN KB STEERING IS NOT INSTALLED (ALSO MULTIPLAYER or VCA)
 	if self.spec_drivable == nil or self.spec_keyboardSteering == nil or g_currentMission.missionDynamicInfo.isMultiplayer or g_modIsLoaded['FS22_VehicleControlAddon'] then
 		return superFunc(self, dt, currentSpeed, acceleration, doHandbrake, stopAndGoBraking)
 	end
@@ -421,11 +421,11 @@ function KeyboardSteering:onUpdate(superFunc, dt, isActiveForInput, isActiveForI
 								local steeringAngleFactor = math.abs(spec.axisSide)
 								speedFactor = speedFactor * math.min(setting * roadSpeedFactor * steeringAngleFactor, 2)
 							end
-							speedFactor = speedFactor * (self.autoRotateBackSpeed or 1) * 0.5
+							speedFactor = speedFactor * (self.autoRotateBackSpeed or 1) / 2
 						else
 							local keyPressTimeFactor = KeyboardSteering.timeKeyHeld/KeyboardSteering.maxKeyHeldTime
 							speedFactor = math.min(1 / (self.lastSpeed * spec.speedRotScale + spec.speedRotScaleOffset), 1)
-							speedFactor = speedFactor * sensitivitySetting * keyPressTimeFactor * 0.5
+							speedFactor = speedFactor * sensitivitySetting * keyPressTimeFactor
 						end
 					end
 
