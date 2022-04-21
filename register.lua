@@ -3,7 +3,7 @@
 -- ============================================================= --
 KeyboardSteeringREGISTER = {};
 
-g_specializationManager:addSpecialization('keyboardSteering', 'KeyboardSteering', Utils.getFilename('KeyboardSteering.lua', g_currentModDirectory), true);
+g_specializationManager:addSpecialization('keyboardSteering', 'KeyboardSteering', Utils.getFilename('KeyboardSteering.lua', g_currentModDirectory), nil);
 
 for vehicleName, vehicleType in pairs(g_vehicleTypeManager.types) do
 	if  SpecializationUtil.hasSpecialization(Drivable,  vehicleType.specializations) and
@@ -11,6 +11,6 @@ for vehicleName, vehicleType in pairs(g_vehicleTypeManager.types) do
 		SpecializationUtil.hasSpecialization(Enterable, vehicleType.specializations) and
 		SpecializationUtil.hasSpecialization(Dashboard, vehicleType.specializations) and
 		not SpecializationUtil.hasSpecialization(Locomotive, vehicleType.specializations) then
-			g_vehicleTypeManager:addSpecialization(vehicleName, 'keyboardSteering') 
+			g_vehicleTypeManager:addSpecialization(vehicleName, g_currentModName .. '.keyboardSteering') 
 	end
 end

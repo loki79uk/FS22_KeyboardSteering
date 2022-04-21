@@ -1,9 +1,10 @@
 -- ============================================================= --
 -- KEYBOARD STEERING MOD
 -- ============================================================= --
-KeyboardSteering = {};
+KeyboardSteering = {}
+KeyboardSteering.specName = ("spec_%s.keyboardSteering"):format(g_currentModName)
 
-addModEventListener(KeyboardSteering);
+addModEventListener(KeyboardSteering)
 
 function KeyboardSteering.prerequisitesPresent(specializations)
 	return	SpecializationUtil.hasSpecialization(Drivable, specializations) and
@@ -37,7 +38,9 @@ function KeyboardSteering:onRegisterActionEvents(isActiveForInput, isActiveForIn
 end
 
 function KeyboardSteering:onLoad(savegame)
-	kbs_spec = self.spec_keyboardSteering
+    self.spec_keyboardSteering = self[KeyboardSteering.specName]
+
+    local kbs_spec = self.spec_keyboardSteering
 	kbs_spec.vehicleId					= self.rootNode
 	kbs_spec.vehicleDisabled			= false
 	kbs_spec.justEnteredVehicle 		= false
