@@ -8,7 +8,7 @@
 	<fr>Conduite Au Clavier</fr>
 	</title>
 	<description>
-<en><![CDATA[This mod is designed to give a more analog-like control to the steering and accleration inputs when using a keyboard.
+<en><![CDATA[This mod is designed to give a more analog-like control to the steering and acceleration inputs when using a keyboard.
 
 Key Features:
 - Steering input increases linearly for first 500ms of steering input
@@ -64,7 +64,7 @@ IMPORTANT:
 	<multiplayer supported="true" /> 
 	<iconFilename>modIcon.dds</iconFilename>
 	<extraSourceFiles>
-		<sourceFile filename="register.lua" />
+		<sourceFile filename="KeyboardSteeringInstaller.lua" />
 	</extraSourceFiles>
 	
 	<actions>
