@@ -6,6 +6,7 @@
 	<en>Keyboard Steering</en>
 	<de>Tastatursteuerung</de>
 	<fr>Conduite Au Clavier</fr>
+	<it>Keyboard Steering</it>
 	</title>
 	<description>
 <en><![CDATA[This mod is designed to give a more analog-like control to the steering and acceleration inputs when using a keyboard.
@@ -59,6 +60,23 @@ IMPORTANT:
 - Le paramètre "Vitesse de retour des roues" contrôle désormais la force de réinitialisation ainsi que la plage de l'angle de braquage maximal
 ]]>
 </fr>
+<it><![CDATA[Questa è una mod progettata per dare un controllo più analogico agli input di sterzo e accelerazione quando si utilizza una tastiera.
+
+Caratteristiche principali:
+- L'input dello sterzo aumenta linearmente per i primi 500 ms di input dello sterzo
+- L'input dello sterzo diminuisce linearmente alla stessa velocità quando non vengono premuti i tasti
+- La forza di sterzata è proporzionale alla velocità su strada (quindi puoi comunque manovrare normalmente a basse velocità)
+- Esiste un limite all'angolo di sterzata che è anche proporzionale alla velocità su strada
+- Premi contemporaneamente i tasti sinistro e destro per andare dritto (invece di girare a destra come fai nel gioco standard)
+- Non c'è forza di sterzata quando è fermo, anche al 100% per l'impostazione di sterzata
+- L'input di accelerazione è attenuato per ridurre le contrazioni di un veicolo quando si tocca il tasto dell'acceleratore (solo giocatore singolo)
+
+IMPORTANTE:
+- Se stai usando un game pad o un controller, la mod non farà nulla
+- L'impostazione "Sensibilità sterzata" nel gioco è rimasta invariata
+- L'impostazione "Velocità di sterzata all'indietro" ora controlla la quantità di forza di ripristino e anche l'intervallo per l'angolo di sterzata massimo
+]]>
+</it>
 	</description>
 	
 	<multiplayer supported="true" /> 
@@ -80,11 +98,13 @@ IMPORTANT:
 			<en>Keyboard Steering: Toggle</en>
 			<de>Tastatursteuerung: Umschalten</de>
 			<fr>Conduite Au Clavier: Permuter</fr>
+			<it>Controllo da tastiera: attiva/disattiva</it>
 		</text>
 		<text name="input_KBSTEERING_ENABLE_DISABLE">
 			<en>Enable / Disable</en>
 			<de>Aktivieren / Deaktivieren</de>
 			<fr>Activer / Désactiver</fr>
+			<it>Abilita / Disabilita</it>
 		</text>
 	</l10n>
 
